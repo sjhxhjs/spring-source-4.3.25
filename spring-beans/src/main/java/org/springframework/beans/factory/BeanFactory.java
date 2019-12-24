@@ -21,7 +21,9 @@ import org.springframework.core.ResolvableType;
 
 /**
  * The root interface for accessing a Spring bean container.
+ * spring容器接口
  * This is the basic client view of a bean container;
+ * 实例容器基本视图
  * further interfaces such as {@link ListableBeanFactory} and
  * {@link org.springframework.beans.factory.config.ConfigurableBeanFactory}
  * are available for specific purposes.
