@@ -48,6 +48,7 @@ public interface Resource extends InputStreamSource {
 
 	/**
 	 * Determine whether this resource actually exists in physical form.
+	 * 确定该资源是否以物理形式存在
 	 * <p>This method performs a definitive existence check, whereas the
 	 * existence of a {@code Resource} handle only guarantees a valid
 	 * descriptor handle.
@@ -56,6 +57,7 @@ public interface Resource extends InputStreamSource {
 
 	/**
 	 * Indicate whether the contents of this resource can be read via
+	 * 表示资源内容是否可读
 	 * {@link #getInputStream()}.
 	 * <p>Will be {@code true} for typical resource descriptors;
 	 * note that actual content reading may still fail when attempted.
@@ -66,7 +68,7 @@ public interface Resource extends InputStreamSource {
 	boolean isReadable();
 
 	/**
-	 * Indicate whether this resource represents a handle with an open stream.
+	 * Indicate whether this resource represents（具有） a handle with an open stream.
 	 * If {@code true}, the InputStream cannot be read multiple times,
 	 * and must be read and closed to avoid resource leaks.
 	 * <p>Will be {@code false} for typical resource descriptors.
@@ -129,6 +131,7 @@ public interface Resource extends InputStreamSource {
 
 	/**
 	 * Return a description for this resource,
+	 * 打印错误日志
 	 * to be used for error output when working with the resource.
 	 * <p>Implementations are also encouraged to return this value
 	 * from their {@code toString} method.

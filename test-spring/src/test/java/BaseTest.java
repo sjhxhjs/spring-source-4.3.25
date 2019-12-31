@@ -14,9 +14,20 @@ import org.springframework.core.io.ClassPathResource;
 public class BaseTest {
     @Test
     public void test() {
-        /*ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-application.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-application.xml");
         IDemoService demoService = context.getBean("demoService", IDemoService.class);
-        demoService.run();*/
+        demoService.run();
+
+        /**
+         * bean实例化过程
+         * 1、读取xml配置文件，生成resource
+         *
+         *
+         * 2、beanfactory根据resource文件解析注册实例，返回bean工厂
+         * DefaultListableBeanFactory是整个bean加载的核心部分
+         *
+         * 3、调用实例
+         */
 
         BeanFactory bf = new XmlBeanFactory(new ClassPathResource("spring-application.xml"));
         IDemoService bean = (IDemoService) bf.getBean("demoService");
