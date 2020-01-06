@@ -252,6 +252,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * Return the EntityResolver to use, building a default resolver
 	 * if none specified.
 	 */
+	/**
+	 * 提供寻找dtd声明的方法，将dtd文件放到项目中，直接通过该方法寻找dtd文件
+	 * @return
+	 */
 	protected EntityResolver getEntityResolver() {
 		if (this.entityResolver == null) {
 			// Determine default EntityResolver to use.
@@ -317,12 +321,21 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			logger.info("Loading XML bean definitions from " + encodedResource);
 		}
 
+		/**
+		 * private final ThreadLocal<Set<EncodedResource>> resourcesCurrentlyBeingLoaded =
+		 * 			new NamedThreadLocal<Set<EncodedResource>>
+		 * 			    ("XML bean definition resources currently being loaded");
+		 */
 		Set<EncodedResource> currentResources = this.resourcesCurrentlyBeingLoaded.get();
 		if (currentResources == null) {
 			currentResources = new HashSet<EncodedResource>(4);
 			this.resourcesCurrentlyBeingLoaded.set(currentResources);
 		}
 		if (!currentResources.add(encodedResource)) {
+			/**
+			 * 将实例化的对象依赖的配置保存到set中，如果保存失败
+			 * 抛出循环引用的异常
+			 */
 			throw new BeanDefinitionStoreException(
 					"Detected cyclic loading of " + encodedResource + " - check your import definitions!");
 		}
@@ -388,7 +401,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		try {
+			//加载xml文件，获得document
 			Document doc = doLoadDocument(inputSource, resource);
+			//根据返回的document信息注册bean
 			return registerBeanDefinitions(doc, resource);
 		}
 		catch (BeanDefinitionStoreException ex) {
@@ -503,9 +518,17 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see BeanDefinitionDocumentReader#registerBeanDefinitions
 	 */
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+		//使用defaultbeandefinitiondocumentreader实例化beandefinitiondocumentreader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+		//已经实例化的bean个数
+		/**
+		 * 	private final Map<String, BeanDefinition> beanDefinitionMap =
+		 * 	new ConcurrentHashMap<String, BeanDefinition>(256);
+		 */
 		int countBefore = getRegistry().getBeanDefinitionCount();
+		//加载，注册bean
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+		//返回本次加载的个数
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
 
@@ -516,6 +539,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #setDocumentReaderClass
 	 */
 	protected BeanDefinitionDocumentReader createBeanDefinitionDocumentReader() {
+		/**
+		 * private Class<?> documentReaderClass = DefaultBeanDefinitionDocumentReader.class;
+		 * DefaultBeanDefinitionDocumentReader实现了BeanDefinitionDocumentReader
+		 * 里面定义了springxml文件中实例化对象所需的各种标签
+		 */
 		return BeanDefinitionDocumentReader.class.cast(BeanUtils.instantiateClass(this.documentReaderClass));
 	}
 

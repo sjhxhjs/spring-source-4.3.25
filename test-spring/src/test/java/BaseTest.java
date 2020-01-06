@@ -21,7 +21,8 @@ public class BaseTest {
         /**
          * bean实例化过程
          * 1、读取xml配置文件，生成resource
-         *
+         *resource封装inputstreansource,inputstreamsource返回inputstream对象，对应不同来源的文件都有相应的resource实现，以获取资源文件
+         * 如：filesystemresource，classpathresource，urlresource等
          *
          * 2、beanfactory根据resource文件解析注册实例，返回bean工厂
          * DefaultListableBeanFactory是整个bean加载的核心部分

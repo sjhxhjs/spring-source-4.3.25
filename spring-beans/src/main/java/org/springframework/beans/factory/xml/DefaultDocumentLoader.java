@@ -87,6 +87,9 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
 			throws ParserConfigurationException {
 
+		/**
+		 * 工厂
+		 */
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(namespaceAware);
 
@@ -127,6 +130,9 @@ public class DefaultDocumentLoader implements DocumentLoader {
 			DocumentBuilderFactory factory, EntityResolver entityResolver, ErrorHandler errorHandler)
 			throws ParserConfigurationException {
 
+		/**
+		 * 建造者模式
+		 */
 		DocumentBuilder docBuilder = factory.newDocumentBuilder();
 		if (entityResolver != null) {
 			docBuilder.setEntityResolver(entityResolver);

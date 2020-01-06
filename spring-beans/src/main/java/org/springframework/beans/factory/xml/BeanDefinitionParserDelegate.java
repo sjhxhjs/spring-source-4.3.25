@@ -434,15 +434,19 @@ public class BeanDefinitionParserDelegate {
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, BeanDefinition containingBean) {
+		//解析id
 		String id = ele.getAttribute(ID_ATTRIBUTE);
+		//解析name
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 
+		//name存在多个别名的时候，分割别名
 		List<String> aliases = new ArrayList<String>();
 		if (StringUtils.hasLength(nameAttr)) {
 			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
 			aliases.addAll(Arrays.asList(nameArr));
 		}
 
+		//当id即配置文件中没有指定bean名称， 并且别名不为空的时候，说明采用别名
 		String beanName = id;
 		if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
 			beanName = aliases.remove(0);
@@ -452,10 +456,12 @@ public class BeanDefinitionParserDelegate {
 			}
 		}
 
+		//如果不包含实例化的bean，判断该bean名称是否重复
 		if (containingBean == null) {
 			checkNameUniqueness(beanName, aliases, ele);
 		}
 
+		//解析除id，name标签外的其他标签
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {

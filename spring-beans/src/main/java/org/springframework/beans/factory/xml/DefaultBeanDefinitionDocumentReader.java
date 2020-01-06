@@ -91,6 +91,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		this.readerContext = readerContext;
 		logger.debug("Loading bean definitions");
 		Element root = doc.getDocumentElement();
+		//解析xml模板，注册具体bean
 		doRegisterBeanDefinitions(root);
 	}
 
@@ -114,11 +115,15 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Register each bean definition within the given root {@code <beans/>} element.
 	 */
 	protected void doRegisterBeanDefinitions(Element root) {
-		// Any nested <beans> elements will cause recursion in this method. In
-		// order to propagate and preserve <beans> default-* attributes correctly,
-		// keep track of the current (parent) delegate, which may be null. Create
-		// the new (child) delegate with a reference to the parent for fallback purposes,
+		// Any nested <beans> elements will cause recursion in this method（嵌套方法递归解析）.
+		// In order to propagate and preserve <beans> default-* attributes correctly,
+		//为了保证每个属性的正确接卸
+		// keep track of the current (parent) delegate, which may be null.
+		//跟踪当前父类委托
+		// Create the new (child) delegate with a reference to the parent for fallback purposes,
+		// 创建新的解析实例，并返回引用
 		// then ultimately reset this.delegate back to its original (parent) reference.
+		//最后返回给初始的引用
 		// this behavior emulates a stack of delegates without actually necessitating one.
 		BeanDefinitionParserDelegate parent = this.delegate;
 		this.delegate = createDelegate(getReaderContext(), root, parent);
@@ -138,6 +143,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 
+		//模板方法模式
 		preProcessXml(root);
 		parseBeanDefinitions(root, this.delegate);
 		postProcessXml(root);
@@ -159,21 +165,25 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * @param root the DOM root element of the document
 	 */
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
+		//默认解析
 		if (delegate.isDefaultNamespace(root)) {
 			NodeList nl = root.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++) {
 				Node node = nl.item(i);
 				if (node instanceof Element) {
 					Element ele = (Element) node;
+					//默认解析
 					if (delegate.isDefaultNamespace(ele)) {
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						//自定义解析
 						delegate.parseCustomElement(ele);
 					}
 				}
 			}
 		}
+		//自定义解析
 		else {
 			delegate.parseCustomElement(root);
 		}
@@ -301,7 +311,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		//解析元素
+		//返回的对象包含了配置文件中的各种属性，如id，name，class
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
+
 		if (bdHolder != null) {
 			//解析子节点元素
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
