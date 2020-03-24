@@ -20,7 +20,7 @@ import java.beans.PropertyDescriptor;
 
 /**
  * The central interface of Spring's low-level JavaBeans infrastructure.
- *
+ *Spring底层JavaBeans基础设施的中心接口
  * <p>Typically not used directly but rather implicitly via a
  * {@link org.springframework.beans.factory.BeanFactory} or a
  * {@link org.springframework.validation.DataBinder}.

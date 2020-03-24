@@ -508,40 +508,71 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			//刷新前预处理
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			//注册bean工厂，注册beandefinition
+			//1、刷新beanfactory，关闭旧的，销毁bean，重新创建
+			//2、customizeBeanFactory 设置循环引用，覆盖属性
+			//3、注册beandefinition到beanfactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			//beanfactory预设置工作，通过ApplicationContextAwareProcessor注入applicationContext
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				//beanfactory的后处理设置工作
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				//执行BeanFactoryPostProcessor方法，1）、执行BeanFactoryPostProcessor的方法；
+				//        先执行BeanDefinitionRegistryPostProcessor
+				//        1）、获取所有的BeanDefinitionRegistryPostProcessor；
+				//        2）、看先执行实现了PriorityOrdered优先级接口的BeanDefinitionRegistryPostProcessor、
+				//            postProcessor.postProcessBeanDefinitionRegistry(registry)
+				//        3）、在执行实现了Ordered顺序接口的BeanDefinitionRegistryPostProcessor；
+				//            postProcessor.postProcessBeanDefinitionRegistry(registry)
+				//        4）、最后执行没有实现任何优先级或者是顺序接口的BeanDefinitionRegistryPostProcessors；
+				//            postProcessor.postProcessBeanDefinitionRegistry(registry)
+				//
+				//
+				//        再执行BeanFactoryPostProcessor的方法
+				//        1）、获取所有的BeanFactoryPostProcessor
+				//        2）、看先执行实现了PriorityOrdered优先级接口的BeanFactoryPostProcessor、
+				//            postProcessor.postProcessBeanFactory()
+				//        3）、在执行实现了Ordered顺序接口的BeanFactoryPostProcessor；
+				//            postProcessor.postProcessBeanFactory()
+				//        4）、最后执行没有实现任何优先级或者是顺序接口的BeanFactoryPostProcessor；
+				//            postProcessor.postProcessBeanFactory()
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				//注册bean的后置处理器
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				//初始化事件派发器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
 				onRefresh();
 
 				// Check for listener beans and register them.
+				//注册事件监听
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				//初始化所有剩下的单例bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				//完成ioc容器创建，发送事件
 				finishRefresh();
 			}
 
@@ -584,14 +615,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		//初始化环境属性设置
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		//检验属性合法性
 		getEnvironment().validateRequiredProperties();
 
 		// Allow for the collection of early ApplicationEvents,
 		// to be published once the multicaster is available...
+		//保存容器中早期事件
 		this.earlyApplicationEvents = new LinkedHashSet<ApplicationEvent>();
 	}
 
@@ -611,6 +645,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+
 		refreshBeanFactory();
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {

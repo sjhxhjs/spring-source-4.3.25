@@ -539,15 +539,19 @@ public class BeanDefinitionParserDelegate {
 			if (ele.hasAttribute(PARENT_ATTRIBUTE)) {
 				parent = ele.getAttribute(PARENT_ATTRIBUTE);
 			}
+			//解析属性，需要首先创建承载属性的实例
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
+			//根据承载属性的实例，解析各种属性
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
+			//解析meta属性
 			parseMetaElements(ele, bd);
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
+			//解析构造函数配置
 			parseConstructorArgElements(ele, bd);
 			parsePropertyElements(ele, bd);
 			parseQualifierElements(ele, bd);
@@ -831,8 +835,11 @@ public class BeanDefinitionParserDelegate {
 	 * Parse a constructor-arg element.
 	 */
 	public void parseConstructorArgElement(Element ele, BeanDefinition bd) {
+		//index属性
 		String indexAttr = ele.getAttribute(INDEX_ATTRIBUTE);
+		//type属性
 		String typeAttr = ele.getAttribute(TYPE_ATTRIBUTE);
+		//name属性
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 		if (StringUtils.hasLength(indexAttr)) {
 			try {

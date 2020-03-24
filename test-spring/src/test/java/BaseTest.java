@@ -30,8 +30,8 @@ public class BaseTest {
          * 3、调用实例
          */
 
-        BeanFactory bf = new XmlBeanFactory(new ClassPathResource("spring-application.xml"));
+        /*BeanFactory bf = new XmlBeanFactory(new ClassPathResource("spring-application.xml"));
         IDemoService bean = (IDemoService) bf.getBean("demoService");
-        bean.run();
+        bean.run();*/
     }
 }
